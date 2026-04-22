@@ -357,7 +357,7 @@ jobs:
         run: |
           scp -i ~/.ssh/deploy_key \
             docker-compose.yml \
-            scripts/deploy.sh \
+            deploy.sh \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/"
 
       - name: Pull new images on server

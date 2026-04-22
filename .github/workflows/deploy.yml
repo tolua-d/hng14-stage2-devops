@@ -259,6 +259,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - run: echo ${{ needs.build.outputs.image_tag }}
+
       - name: Download image tarballs
         uses: actions/download-artifact@v4
         with:

@@ -3,6 +3,7 @@ import redis
 import uuid
 import os
 
+
 app = FastAPI()
 
 REDIS_HOST = os.getenv("REDIS_HOST")
@@ -35,3 +36,4 @@ def get_job(job_id: str):
         # add http error code
         raise HTTPException(status_code=404, detail={"error": "Job not found"})
     return {"job_id": job_id, "status": status.decode()}
+

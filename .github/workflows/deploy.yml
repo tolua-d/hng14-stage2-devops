@@ -20,11 +20,9 @@ jobs:
     name: "1 · Lint"
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
       - uses: actions/checkout@v4
 
       # Python (flake8)
-      - name: set up python using flake8
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -36,7 +34,6 @@ jobs:
         run: flake8 api/main.py worker/worker.py api/tests/
 
       # JavaScript (eslint) 
-      - name: set up javascript with eslint
       - uses: actions/setup-node@v4
         with:
           node-version: "20"

@@ -59,14 +59,17 @@ def test_create_job_returns_job_id():
 
 
 def test_create_job_writes_to_redis():
-    """POST /jobs must push the job onto the queue and set its initial status."""
+    """POST /jobs must push the job onto the queue and set its initial status.
+    """
     response = client.post("/jobs")
     job_id = response.json()["job_id"]
 
     # Verify the job was enqueued
     _redis_mock.lpush.assert_called_once_with("job", job_id)
     # Verify the initial status was recorded
-    _redis_mock.hset.assert_called_once_with(f"job:{job_id}", "status", "queued")
+    _redis_mock.hset.assert_called_once_with(
+        f"job:{job_id}", "status", "queued"
+    )
 
 
 # Test 3: Job status retrieval
@@ -83,10 +86,12 @@ def test_get_job_returns_status_when_found():
 
 
 def test_get_job_returns_404_when_not_found():
-    """GET /jobs/{id} must return 404, not 200, when the job does not exist.
+    """GET /jobs/{id} must return 404, not 200, 
+    when the job does not exist.
 
-    BUG that was fixed: the original code returned 200 {"error": "not found"},
-    making it impossible for callers to distinguish missing jobs by status code.
+    BUG that was fixed: the original code returned 
+    200 {"error": "not found"}, making it impossible 
+    for callers to distinguish missing jobs by status code.
     """
     _redis_mock.hget.return_value = None
 

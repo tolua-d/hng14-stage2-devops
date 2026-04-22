@@ -31,7 +31,7 @@ jobs:
         run: pip install flake8
 
       - name: Lint Python
-        run: flake8 api/main.py worker/worker.py api/tests.py
+        run: flake8 api/main.py worker/worker.py api/tests_api.py
 
       # JavaScript (eslint) 
       - uses: actions/setup-node@v4

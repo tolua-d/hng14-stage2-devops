@@ -50,7 +50,7 @@ jobs:
       - name: Install hadolint
         run: |
           wget -qO /usr/local/bin/hadolint \
-            https://github.com/hadolint/hadolint/releases/v2.14.0/download/hadolint-Linux-x86_64
+            https://github.com/hadolint/hadolint/releases/download/v2.14.0/hadolint-Linux-x86_64
           chmod +x /usr/local/bin/hadolint
 
       - name: Lint Dockerfiles

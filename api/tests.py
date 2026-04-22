@@ -10,8 +10,10 @@ from unittest.mock import MagicMock
 import pytest
 from fastapi.testclient import TestClient
 
-# Grab the mock instance that conftest.py installed
-_redis_mock: MagicMock = sys.modules["redis"].Redis.return_value
+_redis_instance = MagicMock()
+_redis_mock = MagicMock()
+_redis_mock.Redis.return_value = _redis_instance
+sys.modules["redis"] = _redis_mock
 
 # Import app AFTER the stub is in place
 from .main import app  # noqa: E402
@@ -22,13 +24,14 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def reset_redis_mock():
     """Reset call history before every test so tests are independent."""
+    _redis_instance.reset_mock()
     _redis_mock.reset_mock()
 
 
 # Test 1: Test Health Endpoint
 def test_health_returns_ok():
     """GET /health must return 200 and {"status": "ok"} when Redis is up."""
-    _redis_mock.ping.return_value = True
+    _redis_instance.ping.return_value = True
 
     response = client.get("/health")
 
@@ -38,13 +41,13 @@ def test_health_returns_ok():
 
 def test_health_fails_when_redis_unavailable():
     """GET /health must return 503 when Redis is unreachable."""
-    _redis_mock.ping.side_effect = Exception("Redis unreachable")
+    _redis_instance.ping.side_effect = Exception("Redis unreachable")
 
     response = client.get("/health")
 
     assert response.status_code == 503
     # Reset so later tests are not affected
-    _redis_mock.ping.side_effect = None
+    _redis_instance.ping.side_effect = None
 
 
 # Test 2: Job creation
@@ -65,9 +68,9 @@ def test_create_job_writes_to_redis():
     job_id = response.json()["job_id"]
 
     # Verify the job was enqueued
-    _redis_mock.lpush.assert_called_once_with("job", job_id)
+    _redis_instance.lpush.assert_called_once_with("job", job_id)
     # Verify the initial status was recorded
-    _redis_mock.hset.assert_called_once_with(
+    _redis_instance.hset.assert_called_once_with(
         f"job:{job_id}", "status", "queued"
     )
 
@@ -75,7 +78,7 @@ def test_create_job_writes_to_redis():
 # Test 3: Job status retrieval
 def test_get_job_returns_status_when_found():
     """GET /jobs/{id} must return the job_id and its current status."""
-    _redis_mock.hget.return_value = b"queued"
+    _redis_instance.hget.return_value = b"queued"
 
     response = client.get("/jobs/test-job-123")
 
@@ -87,7 +90,7 @@ def test_get_job_returns_status_when_found():
 
 def test_get_job_returns_404_when_not_found():
     """GET /jobs/{id} must return 404 when the job does not exist."""
-    _redis_mock.hget.return_value = None
+    _redis_instance.hget.return_value = None
 
     response = client.get("/jobs/nonexistent-id")
 
@@ -96,7 +99,7 @@ def test_get_job_returns_404_when_not_found():
 
 def test_get_job_returns_completed_status():
     """GET /jobs/{id} correctly surfaces a completed status."""
-    _redis_mock.hget.return_value = b"completed"
+    _redis_instance.hget.return_value = b"completed"
 
     response = client.get("/jobs/done-job-456")
 

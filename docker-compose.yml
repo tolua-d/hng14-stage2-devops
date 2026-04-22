@@ -1,0 +1,100 @@
+networks:
+  hng_network:
+    driver: bridge
+  
+services:
+  api:
+    build: ./api
+    ports:
+      - ${APP_PORT}:8080
+    container_name: app_api
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+    networks:
+     - hng_network
+    depends_on:
+      redis: 
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${API_CPU_LIMIT:-1.00}"
+          memory: "${API_MEM_LIMIT:-256M}"
+  
+  redis:
+    image: redis:latest
+    container_name: app_redis
+    networks:
+     - hng_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${REDIS_CPU_LIMIT:-0.50}"
+          memory: "${REDIS_MEM_LIMIT:-128M}"
+    
+  worker:
+    build: ./worker
+    container_name: app_worker
+    environment:
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+    networks:
+      - hng_network
+    depends_on: 
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD", "python", "-c", "import redis, os", 
+        "r-redis.Redis(host=os.getenv('REDIS_HOST'), port=os.getenv('REDIS_PORT'), password=os.getenv('REDIS_PASSWORD'))",
+        "r.ping()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${WORKER_CPU_LIMIT:-1.00}"
+          memory: "${WORKER_MEM_LIMIT:-256M}"
+  
+  hng_frontend:
+    build: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:3000
+    container_name: app_frontend
+    environment:
+      - FRONTEND_PORT=${FRONTEND_PORT}
+      - API_URL=${API_URL}
+    networks:
+      - hng_network
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 15s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "${FRONTEND_CPU_LIMIT:-0.50}"
+          memory: "${FRONTEND_MEM_LIMIT:-128M}"

@@ -288,6 +288,7 @@ jobs:
           REDIS_PASSWORD: ""
           API_URL: http://api:8000
           FRONTEND_PORT: "3000"
+          APP_PORT: "8000"
         run: |
           docker compose up -d
           # Give services time to start and pass their own health checks
@@ -376,3 +377,9 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "docker compose -f ${{ secrets.DEPLOY_PATH }}/docker-compose.yml ps"
+        
+      - name: Start docker containers
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
+            "docker compose -f ${{ secrets.DEPLOY_PATH }}/docker-compose.yml up -d"

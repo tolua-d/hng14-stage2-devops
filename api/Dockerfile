@@ -4,7 +4,6 @@ WORKDIR /code
 
 COPY requirements.txt /code/
 
-# apt install curl, delete apt install cache and pip install requirements
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl=7.68.0-1ubuntu2.7 \
     && rm -rf /var/lib/apt/lists/* \
@@ -15,7 +14,6 @@ USER app
 
 COPY main.py .
 
-# check if the endpoint returns a 200
 HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3\
  CMD curl -f http://localhost:8080/health || exit 1
 

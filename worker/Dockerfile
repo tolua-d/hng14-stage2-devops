@@ -8,7 +8,6 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-# check if the worker connects to the redis successfully
 HEALTHCHECK --interval=30s --timeout=30s --start-period=15s --retries=3 \
     CMD python -c import redis, os r=redis.Redis(host=os.getenv('REDIS_HOST'), \
         port=os.getenv('REDIS_PORT'), password=os.getenv('REDIS_PASSWORD')) r.ping()

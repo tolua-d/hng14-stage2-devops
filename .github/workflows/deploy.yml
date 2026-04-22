@@ -187,6 +187,9 @@ jobs:
     permissions:
       security-events: write
 
+    outputs:
+      image_tag: ${{ needs.build.outputs.image_tag }}
+
     steps:
       - uses: actions/checkout@v4
 
@@ -259,7 +262,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo ${{ needs.build.outputs.image_tag }}
+      - run: echo ${{ needs.security.outputs.image_tag }}
 
       - name: Download image tarballs
         uses: actions/download-artifact@v4
@@ -272,14 +275,14 @@ jobs:
       # Re-tag from registry prefix to the names Compose expects
       - name: Retag images for Compose
         run: |
-          TAG="${{ needs.build.outputs.image_tag }}"
+          TAG="${{ needs.security.outputs.image_tag }}"
           docker tag ${{ env.REGISTRY }}/hng-api:${TAG}      hng-api:${TAG}
           docker tag ${{ env.REGISTRY }}/hng-worker:${TAG}   hng-worker:${TAG}
           docker tag ${{ env.REGISTRY }}/hng-frontend:${TAG} hng-frontend:${TAG}
 
       - name: Bring stack up
         env:
-          IMAGE_TAG: ${{ needs.build.outputs.image_tag }}
+          IMAGE_TAG: ${{ needs.security.outputs.image_tag }}
           REDIS_HOST: redis
           REDIS_PORT: "6379"
           REDIS_PASSWORD: ""

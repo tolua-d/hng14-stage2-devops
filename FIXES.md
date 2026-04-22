@@ -10,7 +10,7 @@ Fixes:
     - the application was binding to 127.0.0.1 which made the frontend unable to access it
     - no error status codes in error return response
     - no healthcheck endpoint
-    - missing blank lines before and after top level functions and classes 
+    - missing blank lines before and after top level functions and classes  
 Fixes:
         * replaced it with the env variable
         * added error code for error response

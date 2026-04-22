@@ -23,7 +23,8 @@
     }
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "eslint": "^10.2.1",
+    "express": "^4.18.2"
   }
 }

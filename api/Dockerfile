@@ -5,7 +5,7 @@ WORKDIR /code
 COPY requirements.txt /code/
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl=7.68.0-1ubuntu2.7 \
+    && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/* \
     && pip install --no-cache-dir -r requirements.txt \
     && useradd app   

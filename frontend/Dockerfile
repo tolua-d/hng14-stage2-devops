@@ -10,7 +10,7 @@ COPY app.js .
 
 COPY views ./views
 
-RUN useradd app
+RUN adduser -D app
 
 USER app
 

@@ -24,7 +24,7 @@ app.get('/status/:id', async (req, res) => {
     res.json(response.data);
   } catch (err) {
     if (err.response && err.status === 404){
-    res.status(404).json({ error: "Job not found" })};
+    return res.status(404).json({ error: "Job not found" })}
     res.status(400).json({ error: "something went wrong" });
   }
 });

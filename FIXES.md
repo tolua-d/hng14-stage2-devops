@@ -9,11 +9,15 @@ Fixes:
     - wrong redis connection host (localhost fails in docker)
     - the application was binding to 127.0.0.1 which made the frontend unable to access it
     - no error status codes in error return response
-    - no healthcheck endpoint  
+    - no healthcheck endpoint
+    - missing blank lines before and after top level functions and classes  
+    - missing JSONResponse() statement
 Fixes:
         * replaced it with the env variable
         * added error code for error response
         * added health check endpoint
+        * added two blank lines after imports, two lines after every function and one line after the last function
+        * added JSONResponse() return statement
 3. frontend/yarn-lock.json
     - file was missing  
 Fixes:
@@ -37,9 +41,13 @@ Fixes:
 7. worker/worker.py
     - redis screts were hardcoded
     - no error handling  
+    - unused import
+    - missing blank lines before and after top level functions and classes   
 Fixes:
         * used env variables
         * handled error incase any exception is thrown so the worker doesn't crash 
+        * removed unused import
+        * added two blank lines after imports, two lines after every function and one line after the last function
 8. docker files
     - missing Dockerfile and docker-compose.yml files  
 Fixes:

@@ -262,8 +262,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - run: echo ${{ needs.security.outputs.image_tag }}
-
       - name: Download image tarballs
         uses: actions/download-artifact@v4
         with:
@@ -301,7 +299,34 @@ jobs:
           || (docker compose logs; exit 1)
 
       - name: Run integration test
-        run: python3 scripts/integration_test.py --frontend-url http://localhost:3000 --timeout 60
+        run: |
+          # Submit a job via the frontend/API
+          JOB_ID=$(curl -sf -X POST http://localhost:8000/jobs \
+            -H "Content-Type: application/json" \
+            -d '{"task": "integration-test"}' \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['job_id'])")
+
+          echo "Submitted job ID: $JOB_ID"
+
+          # Poll until status is 'completed' or timeout after 60s
+          DEADLINE=$(( $(date +%s) + 60 ))
+          while [ $(date +%s) -lt $DEADLINE ]; do
+            STATUS=$(curl -sf http://localhost:8000/jobs/$JOB_ID \
+            | python3 -c "import sys,json; print(json.load(sys.stdin)['status'])")
+            echo "Job status: $STATUS"
+            if [ "$STATUS" = "completed" ]; then
+            echo "Job completed successfully"
+            exit 0
+            fi
+            if [ "$STATUS" = "failed" ]; then
+            echo ":x: Job failed"
+            exit 1
+            fi
+            sleep 3
+          done
+
+          echo "Timed out waiting for job to complete"
+          exit 1
 
       - name: Tear down stack (always)
         if: always()

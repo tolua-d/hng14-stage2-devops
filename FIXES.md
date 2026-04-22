@@ -11,11 +11,13 @@ Fixes:
     - no error status codes in error return response
     - no healthcheck endpoint
     - missing blank lines before and after top level functions and classes  
+    - missing JSONResponse() statement
 Fixes:
         * replaced it with the env variable
         * added error code for error response
         * added health check endpoint
         * added two blank lines after imports, two lines after every function and one line after the last function
+        * added JSONResponse() return statement
 3. frontend/yarn-lock.json
     - file was missing  
 Fixes:

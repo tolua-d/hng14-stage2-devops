@@ -5,8 +5,9 @@ Redis is fully mocked via conftest.py (sys.modules stub), so no running
 Redis instance is required.  All tests use FastAPI's TestClient.
 """
 import sys
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
 from fastapi.testclient import TestClient
 
 # Grab the mock instance that conftest.py installed
@@ -59,8 +60,7 @@ def test_create_job_returns_job_id():
 
 
 def test_create_job_writes_to_redis():
-    """POST /jobs must push the job onto the queue and set its initial status.
-    """
+    """POST /jobs must queue the job and set its initial status."""
     response = client.post("/jobs")
     job_id = response.json()["job_id"]
 
@@ -86,13 +86,7 @@ def test_get_job_returns_status_when_found():
 
 
 def test_get_job_returns_404_when_not_found():
-    """GET /jobs/{id} must return 404, not 200, 
-    when the job does not exist.
-
-    BUG that was fixed: the original code returned 
-    200 {"error": "not found"}, making it impossible 
-    for callers to distinguish missing jobs by status code.
-    """
+    """GET /jobs/{id} must return 404 when the job does not exist."""
     _redis_mock.hget.return_value = None
 
     response = client.get("/jobs/nonexistent-id")

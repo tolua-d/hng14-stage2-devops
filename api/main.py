@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
-import redis
-import uuid
 import os
+import uuid
+
+import redis
+from fastapi import FastAPI, HTTPException
 
 app = FastAPI()
 
@@ -36,6 +37,5 @@ def create_job():
 def get_job(job_id: str):
     status = r.hget(f"job:{job_id}", "status")
     if not status:
-        # add http error code
         raise HTTPException(status_code=404, detail={"error": "Job not found"})
     return {"job_id": job_id, "status": status.decode()}

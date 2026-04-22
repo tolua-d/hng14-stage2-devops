@@ -4,7 +4,23 @@
   "main": "app.js",
   "license": "UNLICENSED",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint": "eslint app.js"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true,
+      "es2021": true
+    },
+    "extends": "eslint:recommended",
+    "parserOptions": {
+      "ecmaVersion": 2021
+    },
+    "rules": {
+      "no-console": "off",
+      "no-unused-vars": "error",
+      "no-undef": "error"
+    }
   },
   "dependencies": {
     "express": "^4.18.2",

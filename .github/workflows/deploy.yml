@@ -357,7 +357,7 @@ jobs:
         run: |
           scp -i ~/.ssh/deploy_key \
             docker-compose.yml \
-            scripts/rolling_deploy.sh \
+            scripts/deploy.sh \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}:${{ secrets.DEPLOY_PATH }}/"
 
       - name: Pull new images on server
@@ -376,7 +376,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "cd ${{ secrets.DEPLOY_PATH }} && \
-             HEALTH_TIMEOUT=60 bash rolling_deploy.sh api \
+             HEALTH_TIMEOUT=60 bash deploy.sh api \
                ${{ secrets.REGISTRY_HOST }}/hng-api:${TAG}"
 
       - name: Rolling deploy — Worker
@@ -385,7 +385,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "cd ${{ secrets.DEPLOY_PATH }} && \
-             HEALTH_TIMEOUT=60 bash rolling_deploy.sh worker \
+             HEALTH_TIMEOUT=60 bash deploy.sh worker \
                ${{ secrets.REGISTRY_HOST }}/hng-worker:${TAG}"
 
       - name: Rolling deploy — Frontend
@@ -394,7 +394,7 @@ jobs:
           ssh -i ~/.ssh/deploy_key \
             "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" \
             "cd ${{ secrets.DEPLOY_PATH }} && \
-             HEALTH_TIMEOUT=60 bash rolling_deploy.sh frontend \
+             HEALTH_TIMEOUT=60 bash deploy.sh frontend \
                ${{ secrets.REGISTRY_HOST }}/hng-frontend:${TAG}"
 
       - name: Verify production health

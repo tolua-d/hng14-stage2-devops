@@ -10,12 +10,12 @@ Fixes:
     - the application was binding to 127.0.0.1 which made the frontend unable to access it
     - no error status codes in error return response
     - no healthcheck endpoint
-    - missing blank lines before and after top level functions and classes  
+    - missing blank lines before and after top level functions and classes 
 Fixes:
         * replaced it with the env variable
         * added error code for error response
         * added health check endpoint
-        * added missing blank lines
+        * added two blank lines after imports, two lines after every function and one line after the last function
 3. frontend/yarn-lock.json
     - file was missing  
 Fixes:
@@ -45,7 +45,7 @@ Fixes:
         * used env variables
         * handled error incase any exception is thrown so the worker doesn't crash 
         * removed unused import
-        * added missing blank lines
+        * added two blank lines after imports, two lines after every function and one line after the last function
 8. docker files
     - missing Dockerfile and docker-compose.yml files  
 Fixes:

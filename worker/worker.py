@@ -9,6 +9,7 @@ r = redis.Redis(REDIS_HOST, REDIS_PORT)
 
 print(f"Worker starting. Redis={REDIS_HOST}:{REDIS_PORT}", flush=True)
 
+
 def process_job(job_id):
     print(f"Processing job {job_id}")
     time.sleep(2)  # simulate work
@@ -29,4 +30,3 @@ while True:
             except Exception:
                 # pass to prevent exception loop
                 pass
-

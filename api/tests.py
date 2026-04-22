@@ -6,7 +6,6 @@ Redis instance is required.  All tests use FastAPI's TestClient.
 """
 import sys
 import pytest
-import redis
 from unittest.mock import MagicMock
 from fastapi.testclient import TestClient
 
@@ -18,6 +17,7 @@ from .main import app  # noqa: E402
 
 client = TestClient(app)
 
+
 @pytest.fixture(autouse=True)
 def reset_redis_mock():
     """Reset call history before every test so tests are independent."""
@@ -25,7 +25,6 @@ def reset_redis_mock():
 
 
 # Test 1: Test Health Endpoint
-
 def test_health_returns_ok():
     """GET /health must return 200 and {"status": "ok"} when Redis is up."""
     _redis_mock.ping.return_value = True
@@ -48,7 +47,6 @@ def test_health_fails_when_redis_unavailable():
 
 
 # Test 2: Job creation
-
 def test_create_job_returns_job_id():
     """POST /jobs must return a dict containing a non-empty job_id string."""
     response = client.post("/jobs")
@@ -72,7 +70,6 @@ def test_create_job_writes_to_redis():
 
 
 # Test 3: Job status retrieval
-
 def test_get_job_returns_status_when_found():
     """GET /jobs/{id} must return the job_id and its current status."""
     _redis_mock.hget.return_value = b"queued"
